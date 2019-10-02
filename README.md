@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/JGCRI/citys2m.svg?branch=master)](https://travis-ci.org/JGCRI/citys2m)
+
 # citys2m
 A spatial urban sprawl model
 
