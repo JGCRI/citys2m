@@ -46,7 +46,7 @@ urban_neighbor <- function(urbanMap, winSize){
 #' @import ggplot2
 #' @import caret
 #' @export
-model <- function(congig_yml) {
+model <- function(config_yml) {
 
   # read in configuration file
   config <- read_yaml(config_yml)
