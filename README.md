@@ -19,7 +19,7 @@ An example data supplement containing all data required to run `citys2m` can be 
 ```r
 library(citys2m)
 
-citys2m::install_supplement("<the full path to the directory you want to extract the data to")
+citys2m::install_supplement("<the full path to the directory you want to extract the data to>")
 ```
 
 This function requires that the user has write access to the selected directory.  NOTICE:  This data when extracted will take up to 10 GB of disk space.
@@ -62,7 +62,7 @@ Once the configuration file has been set up, you can run `citys2m` using the fol
 ```r
 library(citys2m)
 
-config_file <- "<Full path to your configuration file with file name and extension.>"
+config_file <- "<Full path to your configuration file with file name and extension>"
 
 # run model preparation
 citys2m::prep_model(config_file)
