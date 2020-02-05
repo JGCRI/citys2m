@@ -4,10 +4,12 @@
 \alias{model}
 \title{Run the citys2m model}
 \usage{
-model(congig_yml)
+model(config_yml, target_country_ids = NA)
 }
 \arguments{
 \item{config_yml}{Full path with file name to the configuration YAML file}
+
+\item{target_country_ids}{Optional.  List of country ids to evaluate.}
 }
 \description{
 Run the citys2m model

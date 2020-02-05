@@ -7,23 +7,16 @@
 #' @param urbanMap binary urban map (0-nonubran; 1-urban)
 #' @param winSize window size
 #' @return a raster of neighborhood value indicating urban probability
-#' @importFrom raster focal
+#' @importFrom raster focal mean
 #' @export
 urban_neighbor <- function(urbanMap, winSize){
-  # calculate the neighborhood using a window
-
-  # Args:
-  # urbanMap: binary urban map (0-nonubran; 1-urban)
-  # winSize: window size
-
-  # Returns:
-  # a raster of neighborhood value indicating urban probability
 
   # create a matrix
   f <- matrix(1, nrow = winSize, ncol = winSize)
   f[(winSize*winSize+1)/2] <- 0
 
   urbanMap[is.na(urbanMap)] <- 0
+
   # apply the moving windows
   neiLayer <- focal(urbanMap, w=f, mean, na.rm=TRUE, pad=FALSE, padValue=NA)
 
@@ -34,7 +27,10 @@ urban_neighbor <- function(urbanMap, winSize){
 #' Run the citys2m model
 #'
 #' @param config_yml Full path with file name to the configuration YAML file
+#' @param target_country_ids Optional.  List of country ids to evaluate.
 #' @importFrom yaml read_yaml
+#' @importFrom raster raster writeRaster
+#' @importFrom dplyr filter
 #' @import raster
 #' @import rgeos
 #' @import dplyr
@@ -46,13 +42,18 @@ urban_neighbor <- function(urbanMap, winSize){
 #' @import ggplot2
 #' @import caret
 #' @export
-model <- function(config_yml) {
+model <- function(config_yml, target_country_ids=NA) {
 
   # read in configuration file
   config <- read_yaml(config_yml)
 
   fileTag <- read.csv(config$model$spatial_var)
   mat.cntryid <- read.csv(config$model$urban_csv)
+
+  if (!is.na(target_country_ids)) {
+    mat.cntryid <- filter(mat.cntryid, Code %in% target_country_ids)
+  }
+
   cntryid <- mat.cntryid[, 2]
   uqCntry = unique(cntryid); # regard one country as an integer
 
@@ -61,7 +62,9 @@ model <- function(config_yml) {
     cntryId <- uqCntry[cId]  #regard one country as an integer
 
     # read the country boundary
-    zoneLayer <- raster(paste0(config$model$input_raster_dir, fileTag[1,1], '/', fileTag[1,2], '_', cntryId, '.tif')) #regard one country as an integer
+    zone_file <- paste0(config$model$input_raster_dir, fileTag[1,1], '/', fileTag[1,2], '_', cntryId, '.tif')
+
+    zoneLayer <- raster(zone_file) #regard one country as an integer
     zoneLayer[zoneLayer == 0] <- NA #remove the background area
 
     # add the land covers
@@ -91,6 +94,7 @@ model <- function(config_yml) {
     urbanDemandRatio <- read.csv(config$model$urban_csv) %>%
       dplyr::filter(Code == uqCntry) %>%  #join using the country ID
       dplyr::select(paste0('y', yList))
+
     # convert the urban demand ratio to urban area
     urbanDemandBase <- urbanDemandRatio[1]
     urbanDemand <- list()
@@ -98,7 +102,7 @@ model <- function(config_yml) {
       if(i==1) {
         urbanDemand[i] = (urbanDemandRatio[i+1]-1)*urbanDemandBase
       } else {
-          urbanDemand[i] <- (urbanDemandRatio[i+1] - urbanDemandRatio[i])*urbanDemandBase
+        urbanDemand[i] <- (urbanDemandRatio[i+1] - urbanDemandRatio[i])*urbanDemandBase
       }
     }
     urbanDemand <- t(do.call(rbind, urbanDemand))*(0.905^2)
@@ -147,7 +151,6 @@ model <- function(config_yml) {
         } else {
           tempSelInd <- tempInd
           demandGap <- demandGap - length(tempSelInd)
-          # print(paste0demandGap)
         }
         # assign the new urban area
         tempUrbanNow[tempSelInd] <-  1
@@ -166,8 +169,8 @@ model <- function(config_yml) {
       print(paste0('finish the year of ', yList[i]))
     }
     # export the urban modelling results
-    if(!dir.exists(config$model$output_raster_dir)) dir.create(config$model$output_raster_dir)
-    writeRaster(tempUrbanMod, paste0(config$model$output_raster_dir, '/UrbanMod_', cntryId,'.tif'), overwrite=TRUE)
+    output_raster <- paste0(config$model$output_raster_dir, '/UrbanMod_', cntryId,'.tif')
+    writeRaster(tempUrbanMod, output_raster, overwrite=TRUE)
 
     print(paste('Finish future urban modeling of Country Id', cntryId))
   }
