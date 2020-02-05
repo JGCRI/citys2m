@@ -1,18 +1,42 @@
-# input files
-spatial_var: "1_input/spatialVar.csv"
-urban_csv: "1_input/SSPdata/SSP2_Urban.csv"
+general:
 
-# full path to the directory holding the input rasters
-input_raster_dir: "1_input/"
+    # start year of simulation
+    start_year: 2020
 
-# full path to the directory where output rasters will be stored
-output_raster_dir: "2_output/ModelResults"
+    # year to process through in simulation
+    through_year: 2100
 
-# start year of simulation
-start_year: 2020
+    # time step
+    year_interval: 10
 
-# year to process through in simulation
-through_year: 2100
+prep_model:
 
-# time step
-year_interval: 10
+    # future GDP data from SSP
+    ssp_gdp_file: '1_input/SSPdata/SSP2_GDP.csv'
+
+    # historical GDP data from world bank
+    hist_gdp_file: '1_input/SSPdata/Hist_GDP.csv'
+
+    # population data
+    population_file: '1_input/SSPdata/SSP2_POP.csv'
+
+    # derived model for each country file
+    global_model_file:  '1_input/SSPdata/fitPara_global_sig.csv'
+
+    # country ID file
+    country_id_file:  '1_input/SSPdata/CntryID.csv'
+
+    # output urban file to be fed into the model run
+    output_urban_file: "1_input/SSPdata/SSP2_Urban.csv"
+
+model:
+
+    # input files
+    spatial_var: "1_input/spatialVar.csv"
+    urban_csv: "1_input/SSPdata/SSP2_Urban.csv"
+
+    # full path to the directory holding the input rasters
+    input_raster_dir: "1_input/"
+
+    # full path to the directory where output rasters will be stored
+    output_raster_dir: "2_output/ModelResults"
