@@ -51,8 +51,8 @@ model <- function(congig_yml) {
   # read in configuration file
   config <- read_yaml(config_yml)
 
-  fileTag <- read.csv(config["spatial_var"])
-  mat.cntryid <- read.csv(config["urban_csv"])
+  fileTag <- read.csv(config$model$spatial_var)
+  mat.cntryid <- read.csv(config$model$urban_csv])
   cntryid <- mat.cntryid[, 2]
   uqCntry = unique(cntryid); # regard one country as an integer
 
@@ -61,17 +61,17 @@ model <- function(congig_yml) {
     cntryId <- uqCntry[cId]  #regard one country as an integer
 
     # read the country boundary
-    zoneLayer <- raster(paste0(config["input_raster_dir"], fileTag[1,1], '/', fileTag[1,2], '_', cntryId, '.tif')) #regard one country as an integer
+    zoneLayer <- raster(paste0(config$model$input_raster_dir, fileTag[1,1], '/', fileTag[1,2], '_', cntryId, '.tif')) #regard one country as an integer
     zoneLayer[zoneLayer == 0] <- NA #remove the background area
 
     # add the land covers
-    coverLayer <- raster(paste0(config["input_raster_dir"], fileTag[2, 1], '/', fileTag[2, 2], '_', cntryId, '.tif'))
+    coverLayer <- raster(paste0(config$model$input_raster_dir, fileTag[2, 1], '/', fileTag[2, 2], '_', cntryId, '.tif'))
 
     # get the suitable layer
-    suitLayer <- raster(paste0(config["input_raster_dir"], fileTag[5, 1], '/', fileTag[5, 2], '_', cntryId, '.tif'))
+    suitLayer <- raster(paste0(config$model$input_raster_dir, fileTag[5, 1], '/', fileTag[5, 2], '_', cntryId, '.tif'))
 
     # get the urbanized areas
-    urbanLayer <- raster(paste0(config["input_raster_dir"], fileTag[4, 1], '/', fileTag[4, 2], '_', cntryId, '.tif'))
+    urbanLayer <- raster(paste0(config$model$input_raster_dir, fileTag[4, 1], '/', fileTag[4, 2], '_', cntryId, '.tif'))
 
     # Load exclusion map
     # exclude the water area
@@ -80,15 +80,15 @@ model <- function(congig_yml) {
     WatLayer = as.logical(WatLayer)*as.logical(zoneLayer)
 
     # exclude the projection area
-    PaLayer = raster(paste0(config["input_raster_dir"], fileTag[3, 1], '/', fileTag[3, 2], '_', cntryId, '.tif'))
+    PaLayer = raster(paste0(config$model$input_raster_dir, fileTag[3, 1], '/', fileTag[3, 2], '_', cntryId, '.tif'))
     PaLayer[PaLayer != 0] <- NA   # assign NA for the projection area
     PaLayer = as.logical(1-PaLayer)*as.logical(zoneLayer)
 
     # year sequence
-    yList <- seq(config["start_year"], config["through_year"], config["year_interval"])
+    yList <- seq(config$general$start_year, config$general$through_year, config$general$year_interval)
 
     # Read the urban demand for each country
-    urbanDemandRatio <- read.csv(config["urban_csv"]) %>%
+    urbanDemandRatio <- read.csv(config$model$urban_csv) %>%
       dplyr::filter(Code == uqCntry) %>%  #join using the country ID
       dplyr::select(paste0('y', yList))
     # convert the urban demand ratio to urban area
@@ -116,7 +116,7 @@ model <- function(congig_yml) {
     # Modeling for each year
     iterList = length(yList);
     tempUrbanNow = tempUrban1;
-    iterNum = config["year_interval"]
+    iterNum = config$general$year_interval
 
     for(i in 1:iterList){
 
@@ -166,8 +166,8 @@ model <- function(congig_yml) {
       print(paste0('finish the year of ', yList[i]))
     }
     # export the urban modelling results
-    if(!dir.exists(config["output_raster_dir"])) dir.create(config["output_raster_dir"])
-    writeRaster(tempUrbanMod, paste0(config["output_raster_dir"], '/UrbanMod_', cntryId,'.tif'), overwrite=TRUE)
+    if(!dir.exists(config$model$output_raster_dir)) dir.create(config$model$output_raster_dir)
+    writeRaster(tempUrbanMod, paste0(config$model$output_raster_dir, '/UrbanMod_', cntryId,'.tif'), overwrite=TRUE)
 
     print(paste('Finish future urban modeling of Country Id', cntryId))
   }
