@@ -126,7 +126,7 @@ model <- function(congig_yml) {
       while (demandGap > 0) {
 
         # Prepare neighborhood
-        neiLayer = Urban_neighbor(tempUrbanNow, 5)
+        neiLayer = urban_neighbor(tempUrbanNow, 5)
 
         # Calcualte the development probability
         DevLayer = tempsuitLayer * neiLayer * temppaLayer * tempwatLayer
