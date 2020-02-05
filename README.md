@@ -22,7 +22,7 @@ library(citys2m)
 citys2m::install_supplement("<the full path to the directory you want to extract the data to>")
 ```
 
-This function requires that the user has write access to the selected directory.  NOTICE:  This data when extracted will take up to 10 GB of disk space.
+This function requires that the user has write access to the selected directory.  NOTICE:  This data when extracted will take up to 3.7 GB of disk space.
 
 ### Setting up a run with `citys2m`
 The `citys2m` model has two main functions that are used to conduct runs:
