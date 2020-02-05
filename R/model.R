@@ -52,7 +52,7 @@ model <- function(congig_yml) {
   config <- read_yaml(config_yml)
 
   fileTag <- read.csv(config$model$spatial_var)
-  mat.cntryid <- read.csv(config$model$urban_csv])
+  mat.cntryid <- read.csv(config$model$urban_csv)
   cntryid <- mat.cntryid[, 2]
   uqCntry = unique(cntryid); # regard one country as an integer
 
