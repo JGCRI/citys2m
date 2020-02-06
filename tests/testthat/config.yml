@@ -9,7 +9,10 @@ general:
     # time step
     year_interval: 10
 
-prep_model:
+    # log file name and location
+    log_file:  './outputs/logfile.log'
+
+prepare_model:
 
     # future GDP data from SSP
     ssp_gdp_file: './inputs/SSPdata/SSP2_GDP.csv'
@@ -26,14 +29,16 @@ prep_model:
     # country ID file
     country_id_file:  './inputs/SSPdata/CntryID.csv'
 
-    # output urban file to be fed into the model run
+    # output urban file to be fed into the model run; NULL if not saving output
     output_urban_file: "./inputs/SSPdata/SSP2_Urban.csv"
 
 model:
 
     # input files
     spatial_var: "./inputs/spatialVar.csv"
-    urban_csv: "./inputs/SSPdata/SSP2_Urban.csv"
+
+    # the urban CSV file generated from the `prepare_model` function.  NULL if generating in code.
+    urban_csv: NULL
 
     # full path to the directory holding the input rasters
     input_raster_dir: "./inputs/"

@@ -24,6 +24,44 @@ urban_neighbor <- function(urbanMap, winSize){
 }
 
 
+#' Mirror the configuration file to the log file
+#'
+#' @param config Configuration object from YAML read_yaml
+#' @param config_yml Full path with file name to the configuration YAML file
+#' @importFrom logger log_info
+log_config <- function(config, config_yml) {
+
+  log_info("Configuration file:  {config_yml}")
+  log_info("CONFIG:  general$start_year: {config$general$start_year}")
+  log_info("CONFIG:  general$through_year: {config$general$through_year}")
+  log_info("CONFIG:  general$year_interval: {config$general$year_interval}")
+  log_info("CONFIG:  general$log_file: {config$general$log_file}")
+  log_info("CONFIG:  prepare_model$ssp_gdp_file: {config$prepare_model$ssp_gdp_file}")
+  log_info("CONFIG:  prepare_model$hist_gdp_file: {config$prepare_model$hist_gdp_file}")
+  log_info("CONFIG:  prepare_model$population_file: {config$prepare_model$population_file}")
+  log_info("CONFIG:  prepare_model$country_id_file: {config$prepare_model$country_id_file}")
+
+  if (is.null(config$prepare_model$output_urban_file)) {
+    log_info("CONFIG:  prepare_model$output_urban_file: NULL")
+  } else {
+    log_info("CONFIG:  prepare_model$output_urban_file: {config$prepare_model$output_urban_file}")
+  }
+
+  log_info("CONFIG:  model$spatial_var: {config$model$spatial_var}")
+
+  if (is.null(config$model$urban_csv)) {
+    log_info("CONFIG:  model$urban_csv: NULL")
+  } else {
+    log_info("CONFIG:  model$urban_csv: {config$model$urban_csv}")
+  }
+
+  log_info("CONFIG:  model$input_raster_dir: {config$model$input_raster_dir}")
+  log_info("CONFIG:  model$output_raster_dir: {config$model$output_raster_dir}")
+  log_info("End configuration logging.")
+
+}
+
+
 #' Run the citys2m model
 #'
 #' @param config_yml Full path with file name to the configuration YAML file
@@ -33,15 +71,33 @@ urban_neighbor <- function(urbanMap, winSize){
 #' @importFrom dplyr filter select arrange
 #' @importFrom logger log_info log_appender appender_tee
 #' @export
-model <- function(config_yml, target_country_ids=NA) {
+model <- function(config_yml, target_country_ids=NULL) {
+
+  # set up logger
+  log_file <- tempfile()
+
+  # set logger to write to stdout and file
+  log_appender(appender_tee(log_file))
+
+  start_time <- Sys.time()
+  log_info("Initializing model {start_time}")
 
   # read in configuration file
   config <- read_yaml(config_yml)
 
-  fileTag <- read.csv(config$model$spatial_var)
-  mat.cntryid <- read.csv(config$model$urban_csv)
+  # mirror config file to log file output
+  log_config(config, config_yml)
 
-  if (!is.na(target_country_ids)) {
+  fileTag <- read.csv(config$model$spatial_var)
+
+  # run prepare_model if no urban file is passed in the config file
+  if (is.null(config$model$urban_csv)) {
+    mat.cntryid <- prepare_model(config_obj = config, write_output = FALSE)
+  } else {
+    mat.cntryid <- read.csv(config$model$urban_csv)
+  }
+
+  if (!is.null(target_country_ids)) {
     mat.cntryid <- filter(mat.cntryid, Code %in% target_country_ids)
   }
 
@@ -51,6 +107,8 @@ model <- function(config_yml, target_country_ids=NA) {
   for (cId in 1:length(uqCntry)){
 
     cntryId <- uqCntry[cId]  #regard one country as an integer
+
+    log_info("Processing country id:  {cntryId}")
 
     # read the country boundary
     zone_file <- paste0(config$model$input_raster_dir, fileTag[1,1], '/', fileTag[1,2], '_', cntryId, '.tif')
@@ -82,7 +140,7 @@ model <- function(config_yml, target_country_ids=NA) {
     yList <- seq(config$general$start_year, config$general$through_year, config$general$year_interval)
 
     # Read the urban demand for each country
-    urbanDemandRatio <- read.csv(config$model$urban_csv) %>%
+    urbanDemandRatio <- mat.cntryid %>%
       dplyr::filter(Code == uqCntry) %>%  #join using the country ID
       dplyr::select(paste0('y', yList))
 
@@ -114,6 +172,8 @@ model <- function(config_yml, target_country_ids=NA) {
     iterNum = config$general$year_interval
 
     for(i in 1:iterList){
+
+      log_info("Processing country {cntryId} for year {yList[i]}")
 
       count = 0
       demandGap = as.numeric(tempDemand[i]) #/iterNum
@@ -157,12 +217,17 @@ model <- function(config_yml, target_country_ids=NA) {
       }else{
         tempUrbanMod = stack(tempUrbanMod, tempUrbanNow)
       }
-      print(paste0('finish the year of ', yList[i]))
     }
     # export the urban modelling results
     output_raster <- paste0(config$model$output_raster_dir, '/UrbanMod_', cntryId,'.tif')
-    writeRaster(tempUrbanMod, output_raster, overwrite=TRUE)
+    log_info("Writing output raster:  {output_raster}")
 
-    print(paste('Finish future urban modeling of Country Id', cntryId))
+    writeRaster(tempUrbanMod, output_raster, overwrite=TRUE)
   }
+
+  log_info("Completed model run in {Sys.time() - start_time} seconds.")
+
+  # clean up logger
+  write(readLines(log_file), config$general$log_file)
+  unlink(log_file)
 }

@@ -12,6 +12,8 @@
 #' @export
 prepare_model <- function(config_yml=NULL, config_obj=NULL, write_output=TRUE) {
 
+  log_info("Generating urban data from `prepare_model` function.")
+
   if (is.null(config_yml) & (is.null(config_obj))) {
     log_info("ERROR: Both `config_yml` and `config_obj` are NULL.  Pass an option for the configuration file.")
     exit()
@@ -80,6 +82,7 @@ prepare_model <- function(config_yml=NULL, config_obj=NULL, write_output=TRUE) {
     dplyr::select(cntry, Code, paste0('y', yr_seq))
 
   if (write_output) {
+    log_info("Writing urban output to:  {config$prepare_model$output_urban_file}")
     write.csv(cmbTable, config$prepare_model$output_urban_file, row.names=FALSE)
   }
 

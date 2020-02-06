@@ -4,7 +4,7 @@
 \alias{model}
 \title{Run the citys2m model}
 \usage{
-model(config_yml, target_country_ids = NA)
+model(config_yml, target_country_ids = NULL)
 }
 \arguments{
 \item{config_yml}{Full path with file name to the configuration YAML file}
