@@ -1,6 +1,7 @@
 # ignore test outputs
 tests/testthat/outputs/*.tif
 tests/testthat/outputs/*.csv
+tests/testthat/outputs/*.log
 
 # system
 .DS_Store
