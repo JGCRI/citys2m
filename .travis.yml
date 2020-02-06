@@ -11,3 +11,6 @@ before_install:
   - sudo apt-get --yes --force-yes update -qq
   - sudo apt-get install --yes libproj-dev libgeos-dev libgdal-dev r-cran-ncdf4 libudunits2-dev libpoppler-cpp-dev
   - tlmgr install hanging
+
+r_packages:
+  - rgdal
