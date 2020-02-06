@@ -29,18 +29,9 @@ urban_neighbor <- function(urbanMap, winSize){
 #' @param config_yml Full path with file name to the configuration YAML file
 #' @param target_country_ids Optional.  List of country ids to evaluate.
 #' @importFrom yaml read_yaml
-#' @importFrom raster raster writeRaster
-#' @importFrom dplyr filter
-#' @import raster
-#' @import rgeos
-#' @import dplyr
-#' @import tidyr
-#' @import rgdal
-#' @import snow
-#' @import MASS
-#' @import pROC
-#' @import ggplot2
-#' @import caret
+#' @importFrom raster raster writeRaster intersect area union extract
+#' @importFrom dplyr filter select arrange
+#' @importFrom logger log_info log_appender appender_tee
 #' @export
 model <- function(config_yml, target_country_ids=NA) {
 

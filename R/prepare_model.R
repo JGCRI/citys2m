@@ -6,16 +6,7 @@
 #'
 #' @param config_yml Full path with file name to the configuration YAML file
 #' @importFrom yaml read_yaml
-#' @import raster
-#' @import rgeos
-#' @import dplyr
-#' @import tidyr
-#' @import rgdal
-#' @import snow
-#' @import MASS
-#' @import pROC
-#' @import ggplot2
-#' @import caret
+#' @importFrom dplyr select left_join
 #' @export
 prepare_model <- function(config_yml) {
 
@@ -74,6 +65,7 @@ prepare_model <- function(config_yml) {
 
   SSP_Urban <- do.call(rbind, SSP_Urban_list)
   SSP_Urban <- cbind('y2010'=SSP_Urban[, 1], SSP_Urban[, -1]/SSP_Urban[, 1]) # convert to ratio
+
   # comparise as a table for output
   CntryID <- read.csv(config$prep_model$country_id_file, stringsAsFactors = FALSE) # read the country ID table
   cmbTable <- cbind('cntry'= SSP_GDP[,'cntry'], SSP_Urban, stringsAsFactors = FALSE) %>%

@@ -19,8 +19,13 @@ test_that("Model outputs are ", {
   # read new output file
   new_raster <- raster(output_raster)
 
-  expect_true(all.equal(test_expected, new_raster), info = paste("Output rasters are not the same."))
+  print(all.equal(test_expected, new_raster))
 
+  # evaluates same extent, number of rows and columns, projection, resolution, and origin
   expect_true(compareRaster(test_expected, new_raster), info = paste("Output rasters are not the same."))
+
+  # evaluates value equality
+  expect_true(all.equal(test_expected, new_raster, check.attributes = FALSE), info = paste("Output rasters are not all.equal."))
+
 
 })
