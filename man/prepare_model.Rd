@@ -4,10 +4,15 @@
 \alias{prepare_model}
 \title{Prepare the ubran data for the citys2m model}
 \usage{
-prepare_model(config_yml)
+prepare_model(config_yml = NULL, config_obj = NULL,
+  write_output = TRUE)
 }
 \arguments{
 \item{config_yml}{Full path with file name to the configuration YAML file}
+
+\item{config_obj}{Configuration object from \code{read_yaml}}
+
+\item{write_output}{Optional.  If true, the output will be written to file.}
 }
 \description{
 Prepare the ubran data for the citys2m model
