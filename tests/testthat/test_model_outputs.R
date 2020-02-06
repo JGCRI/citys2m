@@ -21,6 +21,6 @@ test_that("Model outputs are ", {
 
   expect_true(all.equal(test_expected, new_raster), info = paste("Output rasters are not the same."))
 
-  expect_true(compareRaster(test_expected, new_raster))
+  expect_true(compareRaster(test_expected, new_raster), info = paste("Output rasters are not the same."))
 
 })
