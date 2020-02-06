@@ -38,8 +38,6 @@ test_that("Outputs from `prepare_model()`are ", {
   # run the `prepare_model` function and generate results
   output_df <- citys2m::prepare_model(config_yml = config_file, write_output = FALSE)
 
-  print(all.equal(test_expected, output_df))
-
   # evaluates value equality
   expect_true(all.equal(test_expected, output_df), info = paste("Outputs for `prepare_model()` are not all.equal."))
 

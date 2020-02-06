@@ -29,7 +29,7 @@ prepare_model:
     # country ID file
     country_id_file:  './inputs/SSPdata/CntryID.csv'
 
-    # output urban file to be fed into the model run; NULL if not saving output
+    # output urban file to be fed into the model run; if `write_output` is set to NULL in code, this file will not be created
     output_urban_file: "./inputs/SSPdata/SSP2_Urban.csv"
 
 model:
