@@ -1,0 +1,47 @@
+general:
+
+    # start year of simulation
+    start_year: 2010
+
+    # year to process through in simulation
+    through_year: 2100
+
+    # time step
+    year_interval: 10
+
+    # log file name and location
+    log_file:  './outputs/logfile.log'
+
+prepare_model:
+
+    # future GDP data from SSP
+    ssp_gdp_file: './inputs/SSPdata/SSP2_GDP.csv'
+
+    # historical GDP data from world bank
+    hist_gdp_file: './inputs/SSPdata/Hist_GDP.csv'
+
+    # population data
+    population_file: './inputs/SSPdata/SSP2_POP.csv'
+
+    # derived model for each country file
+    global_model_file:  './inputs/SSPdata/fitPara_global_sig.csv'
+
+    # country ID file
+    country_id_file:  './inputs/SSPdata/CntryID.csv'
+
+    # output urban file to be fed into the model run; if `write_output` is set to NULL in code, this file will not be created
+    output_urban_file: "./inputs/SSPdata/SSP2_Urban.csv"
+
+model:
+
+    # input files
+    spatial_var: "./inputs/spatialVar.csv"
+
+    # the urban CSV file generated from the `prepare_model` function.  NULL if generating in code.
+    urban_csv: NULL
+
+    # full path to the directory holding the input rasters
+    input_raster_dir: "./inputs/"
+
+    # full path to the directory where output rasters will be stored
+    output_raster_dir: "./outputs"

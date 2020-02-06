@@ -12,13 +12,12 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Imports:
-    fasterize,
-    ncdf4,
+    magrittr,
+    dplyr,
+    logger,
     raster,
-    rgdal,
-    sf,
-    spex
-Suggests: 
+    yaml
+Suggests:
     testthat (>= 2.1.0),
     knitr,
     rmarkdown
