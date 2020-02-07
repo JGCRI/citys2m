@@ -120,12 +120,12 @@ config_file <- "<Full path to your configuration file with file name and extensi
 citys2m::model(config_file)
 ```
 
-### Run only the `prepare_model()` function to create the urban input file
+#### Run only the `prepare_model()` function to create the urban input file
 ```r
 library(citys2m)
 
 config_file <- "<Full path to your configuration file with file name and extension>"
 
 # run model preparation
-citys2m::prep_model(config_file)
+citys2m::prepare_model(config_file)
 ```
