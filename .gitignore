@@ -2,6 +2,7 @@
 tests/testthat/outputs/*.tif
 tests/testthat/outputs/*.csv
 tests/testthat/outputs/*.log
+tests/testthat/outputs/*.xml
 
 # system
 .DS_Store
